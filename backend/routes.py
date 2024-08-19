@@ -60,11 +60,7 @@ def delete_fabricante(id):
 
     except Exception as e:
         db.session.rollback()
-        return jsonify(
-            {
-                "error": str(e),
-            }
-        ), 500
+        return jsonify(error_msg(e)), 500
 
 # Update Fabricante
 @app.route("/api/fabricantes/<int:id>", methods=["PATCH"])
@@ -131,7 +127,7 @@ def create_categoria():
 
     except Exception as e:
         db.session.rollback()
-        return jsonify(error_msg(e))
+        return jsonify(error_msg(e)), 500
     
 # Delete Categoria
 @app.route("/api/categorias/<int:id>", methods=["DELETE"])
@@ -155,7 +151,7 @@ def delete_categoria(id):
 
     except Exception as e:
         db.session.rollback()
-        return jsonify(error_msg(e))
+        return jsonify(error_msg(e)), 500
 
 # Update Categoria
 @app.route("/api/categorias/<int:id>", methods=["PATCH"])
@@ -186,7 +182,7 @@ def update_categoria(id):
 
     except Exception as e:
         db.session.rollback()
-        return jsonify(error_msg(e))
+        return jsonify(error_msg(e)), 500
     
 # Get Mercadoria
 @app.route("/api/mercadorias", methods=["GET"])
@@ -232,7 +228,7 @@ def create_mercadoria():
 
     except Exception as e:
         db.session.rollback()
-        return jsonify(error_msg(e))
+        return jsonify(error_msg(e)), 500
 
 # Delete Mercadoria
 @app.route("/api/mercadorias/<int:id>", methods=["DELETE"])
@@ -256,7 +252,7 @@ def delete_mercadoria(id):
         
     except Exception as e:
         db.session.rollback()
-        return jsonify(error_msg(e))
+        return jsonify(error_msg(e)), 500
 
 # Update Mercadoria
 @app.route("/api/mercadorias/<int:id>", methods=["PATCH"])
@@ -291,7 +287,7 @@ def update_mercadoria(id):
         return jsonify(mercadoria.to_json()),200
     except Exception as e:
         db.session.rollback()
-        return jsonify(error_msg(e))
+        return jsonify(error_msg(e)), 500
     
 # Get Local
 @app.route("/api/locais", methods=["GET"])
@@ -328,7 +324,7 @@ def create_local():
 
     except Exception as e:
         db.session.rollback()
-        return jsonify(error_msg(e))
+        return jsonify(error_msg(e)), 500
 
 # Delete Local
 @app.route("/api/locais/<int:id>", methods=["DELETE"])
@@ -350,7 +346,7 @@ def delete_local(id):
         )
     except Exception as e:
         db.session.rollback()
-        return jsonify(error_msg(e))
+        return jsonify(error_msg(e)), 500
 
 # Update Local
 @app.route("/api/locais/<int:id>", methods=["PATCH"])
@@ -382,7 +378,7 @@ def update_local(id):
     
     except Exception as e:
         db.session.rollback()
-        return jsonify(error_msg(e))
+        return jsonify(error_msg(e)), 500
     
 # Get users
 @app.route("/api/users", methods=["GET"])
@@ -426,7 +422,7 @@ def create_user():
         
     except Exception as e:
         db.session.rollback()
-        return jsonify(error_msg(e))
+        return jsonify(error_msg(e)), 500
 
 # Delete user
 @app.route("/api/users/<int:id>", methods=["DELETE"])
@@ -450,7 +446,7 @@ def delete_user(id):
     
     except Exception as e:
         db.session.rollback()
-        return jsonify(error_msg(e))
+        return jsonify(error_msg(e)), 500
 
 # Update user
 @app.route("/api/users/<int:id>", methods=["PATCH"])
@@ -487,5 +483,96 @@ def update_user(id):
 
     except Exception as e:
         db.session.rollback()
-        return jsonify(error_msg(e))
+        return jsonify(error_msg(e)), 500
     
+# Get Tipo da Movimentacao
+@app.route("/api/tipomovimentacao", methods=["GET"])
+def get_tipo_movimentacao():
+    tipo_movimentacao = TipoMovimentacao.query.all()
+    result = [tipo.to_json() for tipo in tipo_movimentacao]
+    return jsonify(result)
+
+# Create Tipo da Movimentacao
+@app.route("/api/tipomovimentacao", methods=["POST"])
+def create_tipo_movimentacao():
+    try:
+        data = request.json
+        
+        # validation if the fields is empty!
+        required_fields = ["nome"]
+        for field in required_fields:
+            if not data.get(field):
+                return jsonify(
+                    {
+                        "error": f"Missing required field: {field}"
+                    }
+                ), 404
+            
+        nome = data.get("nome")
+        new_tipo_movimentacao = TipoMovimentacao(
+            nome=nome,
+        )
+        db.session.add(new_tipo_movimentacao)
+        db.session.commit()
+        return jsonify(new_tipo_movimentacao.to_json()), 201
+    
+    except Exception as e:
+        db.session.rollback()
+        return jsonify(error_msg(e)), 500 
+
+# Delete Tipo da Movimentacao
+@app.route("/api/tipomovimentacao/<int:id>", methods=["DELETE"])
+def delete_tipo_movimentacao(id):
+    try:
+        tipo_movimentacao = TipoMovimentacao.query.get(id)
+        if tipo_movimentacao is None:
+            return jsonify(
+                {
+                    "error": "Tipo de Movimentacao nao encontrado!"
+                }
+            ), 404
+        
+        tipo_movimentacao_nome = tipo_movimentacao.nome
+        db.session.delete(tipo_movimentacao)
+        db.session.commit()
+        return jsonify(
+            {
+                "msg": f"Usuario {tipo_movimentacao_nome} deletado!"
+            }
+        ), 200
+    
+    except Exception as e:
+        db.session.rollback()
+        return jsonify(error_msg(e)), 500 
+
+# Update Tipo da Movimentacao
+@app.route("/api/tipomovimentacao/<int:id>", methods=["PATCH"])
+def update_tipo_movimentacao(id):
+    try:
+        tipo_movimentacao = TipoMovimentacao.query.get(id)
+        if tipo_movimentacao is None:
+            return jsonify(
+                {
+                    "error": "Tipo de Movimentacao nao encontrado!"
+                }
+            ), 404
+        
+        data = request.json
+        
+        # validation if the fields is empty!
+        required_fields = ["nome"]
+        for field in required_fields:
+            if not data.get(field):
+                return jsonify(
+                    {
+                        "error": f"Missing required field: {field}"
+                    }
+                ), 404
+            
+        tipo_movimentacao.nome = data.get("nome", tipo_movimentacao.nome)
+        db.session.commit()
+        return jsonify(tipo_movimentacao.to_json()), 200
+    
+    except Exception as e:
+        db.session.rollback()
+        return jsonify(error_msg(e)), 500 
