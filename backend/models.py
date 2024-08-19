@@ -69,11 +69,25 @@ class User(db.Model):
     group = db.Column(db.String(50), nullable=False)
     followups = db.relationship("FollowUp", backref="user")
 
+    def to_json(self):
+        return {
+            "id": self.id,
+            "nome": self.nome,
+            "email": self.email,
+            "user": self.user,
+            "password": self.password,
+            "group": self.group,
+        }
 
 class TipoMovimentacao(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(50), nullable=False)
     followups = db.relationship("FollowUp", backref="tipomovimentacao")
+
+    def to_json(self):
+        return {
+            "nome": self.nome,
+        }
 
 
 class FollowUp(db.Model):
