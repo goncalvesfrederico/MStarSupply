@@ -52,6 +52,13 @@ class Local(db.Model):
     endereco = db.Column(db.String(200), nullable=True)
     followups = db.relationship("FollowUp", backref="local")
 
+    def to_json(self):
+        return {
+            "id": self.id,
+            "nome": self.nome,
+            "endereco": self.endereco,
+        }
+
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
