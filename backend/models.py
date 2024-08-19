@@ -105,10 +105,10 @@ class FollowUp(db.Model):
     def to_json(self):
         return {
             "id": self.id,
-            "tipoMovimentacaoId": self.tipo_movimentacao_id,
-            "mercadoriaId": self.mercadoria_id,
-            "userId": self.user_id,
-            "localId": self.local_id,
+            "tipoMovimentacaoId": self.tipomovimentacao.nome,
+            "mercadoriaId": self.mercadoria.nome,
+            "userId": self.user.nome,
+            "localId": self.local.nome,
             "quantidade": self.quantidade,
             "dataMovimento": self.data_movimento,
         }
