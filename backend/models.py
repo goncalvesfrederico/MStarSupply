@@ -33,6 +33,8 @@ class Mercadoria(db.Model):
     estoque = db.Column(db.Integer, nullable=False, default=0)
     fabricante_id = db.Column(db.Integer, db.ForeignKey("fabricante.id"), nullable=False)
     categoria_id = db.Column(db.Integer, db.ForeignKey("categoria.id"), nullable=False)
+    followups = db.relationship("FollowUp", backref="mercadoria")
+
 
     def to_json(self):
         return {
@@ -98,7 +100,7 @@ class FollowUp(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     local_id = db.Column(db.Integer, db.ForeignKey('local.id'), nullable=False)
     quantidade = db.Column(db.Integer, nullable=False)
-    data_movimento = db.Column(db.DateTime, default=datetime, nullable=False)
+    data_movimento = db.Column(db.DateTime, default=datetime.now, nullable=False)
 
     def to_json(self):
         return {

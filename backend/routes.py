@@ -1,6 +1,7 @@
 from flask import request, jsonify
 from app import app, db
 from utils.utils import error_msg
+from datetime import datetime
 from models import Fabricante, Categoria, Mercadoria, Local, User, TipoMovimentacao, FollowUp
 
 # Get Fabricante
@@ -504,7 +505,7 @@ def create_tipo_movimentacao():
             if not data.get(field):
                 return jsonify(
                     {
-                        "error": f"Missing required field: {field}"
+                        "error": f"Campo Obrigatótio: {field}"
                     }
                 ), 404
             
@@ -565,13 +566,94 @@ def update_tipo_movimentacao(id):
             if not data.get(field):
                 return jsonify(
                     {
-                        "error": f"Missing required field: {field}"
+                        "error": f"Campo Obrigatótio: {field}"
                     }
                 ), 404
             
         tipo_movimentacao.nome = data.get("nome", tipo_movimentacao.nome)
         db.session.commit()
         return jsonify(tipo_movimentacao.to_json()), 200
+    
+    except Exception as e:
+        db.session.rollback()
+        return jsonify(error_msg(e)), 500 
+    
+# Get Followup
+@app.route("/api/followup", methods=["GET"])
+def get_followup():
+    movimentacoes = FollowUp.query.all()
+    result = [movimentacao.to_json() for movimentacao in movimentacoes]
+    return jsonify(result)
+
+# Create Followup
+@app.route("/api/followup", methods=["POST"])
+def create_followup():
+    try:
+        data = request.json
+        
+        # validation if the fields is empty!
+        required_fields = ["tipoMovimentacaoId", "mercadoriaId", "userId", "localId", "quantidade"]
+        for field in required_fields:
+            if field not in data or not data.get(field):
+                return jsonify(
+                    {
+                        "error": f"Campo Obrigatótio: {field}"
+                    }
+                ), 400
+
+        tipo_movimentacao_id = data.get("tipoMovimentacaoId")
+        mercadoria_id = data.get("mercadoriaId")
+        user_id = data.get("userId")
+        local_id = data.get("localId")
+        quantidade = data.get("quantidade")
+
+        foreign_key_validations = {
+            "tipo_movimentacao": TipoMovimentacao.query.get(tipo_movimentacao_id),
+            "mercadoria": Mercadoria.query.get(mercadoria_id),
+            "usuario": User.query.get(user_id),
+            "local": Local.query.get(local_id)
+        }
+
+        for k, v in foreign_key_validations.items():
+            if v is None:
+                return jsonify(
+                    {
+                        "error": f"{k} nao encontrado"
+                    }
+                ), 404
+        
+        # verifica se o tipo de movimentacao [1 ou 2] e muda o estoque
+        if tipo_movimentacao_id == 1:
+            foreign_key_validations["mercadoria"].estoque += quantidade
+
+        elif tipo_movimentacao_id == 2:
+            if foreign_key_validations["mercadoria"].estoque < quantidade:
+                return jsonify(
+                    {
+                        "error": "Estoque insuficiente"
+                    }
+                ), 404
+            foreign_key_validations["mercadoria"].estoque -= quantidade
+        
+        else:
+            return jsonify(
+                {
+                    "error": "Nao existe esse tipo de movimentacao"
+                }
+            )
+
+        new_movimentacao = FollowUp(
+            tipo_movimentacao_id=tipo_movimentacao_id,
+            mercadoria_id=mercadoria_id,
+            user_id=user_id,
+            local_id=local_id,
+            quantidade=quantidade,
+            data_movimento=datetime.now(),
+        )
+
+        db.session.add(new_movimentacao)
+        db.session.commit()
+        return jsonify(new_movimentacao.to_json()), 201
     
     except Exception as e:
         db.session.rollback()
