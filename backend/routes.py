@@ -71,7 +71,6 @@ def delete_fabricante(id):
 def update_fabricante(id):
     try:
         fabricante = Fabricante.query.get(id)
-        print(fabricante.nome)
         if fabricante is None:
             return jsonify(
                 {
@@ -98,3 +97,93 @@ def update_fabricante(id):
     except Exception as e:
         db.session.rollback()
         return jsonify(error_msg(e)), 500
+
+# Get Categoria
+@app.route("/api/categorias", methods=["GET"])
+def get_categoria():
+    categorias = Categoria.query.all()
+    result = [categoria.to_json() for categoria in categorias]
+    return jsonify(result)
+
+# Create Categoria
+@app.route("/api/categorias", methods=["POST"])
+def create_categoria():
+    try:
+        data = request.json
+        
+        # validation if the fields is empty!
+        required_fields = ["nome"]
+        for field in required_fields:
+            if field not in data or not data.get(field):
+                return jsonify(
+                    {
+                        'error': f"Campo Obrigatótio: {field}",
+                    }
+                ), 400
+            
+        nome = data.get("nome")
+        new_categoria = Categoria(
+            nome=nome,
+        )
+        db.session.add(new_categoria)
+        db.session.commit()
+        return jsonify(new_categoria.to_json()), 201
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify(error_msg(e))
+    
+# Delete Categoria
+@app.route("/api/categorias/<int:id>", methods=["DELETE"])
+def delete_categoria(id):
+    try:
+        categoria = Categoria.query.get(id)
+        nome_categoria = categoria.nome
+        if categoria is None:
+            return jsonify(
+                {
+                    "error": "Categoria não encontrado",
+                }
+            ), 404
+        db.session.delete(categoria)
+        db.session.commit()
+        return jsonify(
+            {
+                "msg": f"Fabricante {nome_categoria} excluido!"
+            }
+        ), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify(error_msg(e))
+
+# Update Categoria
+@app.route("/api/categorias/<int:id>", methods=["PATCH"])
+def update_categoria(id):
+    try:
+        categoria = Categoria.query.get(id)
+        if categoria is None:
+            return jsonify(
+                {
+                    "error": "Categoria não encontrado."
+                }
+            )
+        data = request.json
+
+        # validation if the fields is empty!
+        required_fields = ["nome"]
+        for field in required_fields:
+            if field not in data or not data.get(field):
+                return jsonify(
+                    {
+                        'error': f"Campo Obrigatótio: {field}",
+                    }
+                ), 404
+            
+        categoria.nome = data.get("nome", categoria.nome)
+        db.session.commit()
+        return jsonify(categoria.to_json()),200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify(error_msg(e))
