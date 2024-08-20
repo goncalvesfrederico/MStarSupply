@@ -79,7 +79,6 @@ const CreateMovimentacaoModal = ({ setFollowUp }) => {
                 body: JSON.stringify(inputs),
             })
             const data = await res.json();
-            console.debug(data)
             if (!res.ok) {
                 throw new Error(data.error)
             }

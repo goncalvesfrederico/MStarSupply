@@ -1,9 +1,10 @@
 import { IoMoon } from "react-icons/io5";
 import { LuSun } from "react-icons/lu";
 import CreateMovimentacaoModal from "./CreateMovimentacaoModal";
+import CreateMercadoriaModal from "./CreateMercadoriaModal";
 import { Container, useColorMode, Box, useColorModeValue, Flex, Text, Button } from "@chakra-ui/react"
 
-const Navbar = ({setFollowUp}) => {
+const Navbar = ({setFollowUp, setMercadorias}) => {
     const { colorMode, toggleColorMode } = useColorMode();
     
     return (
@@ -20,6 +21,7 @@ const Navbar = ({setFollowUp}) => {
                         </Button>
 
                         <CreateMovimentacaoModal setFollowUp={setFollowUp} />
+                        <CreateMercadoriaModal setMercadorias={setMercadorias} />
                     </Flex>
                 </Flex>
             </Box>

@@ -43,8 +43,8 @@ class Mercadoria(db.Model):
             "numeroRegistro": self.numero_registro,
             "descricao": self.descricao,
             "estoque": self.estoque,
-            "fabricanteId": self.fabricante_id,
-            "categoriaId": self.categoria_id,
+            "fabricanteId": self.fabricante.nome,
+            "categoriaId": self.categoria.nome,
         }
 
 
