@@ -1,5 +1,6 @@
 import { IoMoon } from "react-icons/io5";
 import { LuSun } from "react-icons/lu";
+import CreateMovimentacaoModal from "./CreateMovimentacaoModal";
 import { Container, useColorMode, Box, useColorModeValue, Flex, Text, Button } from "@chakra-ui/react"
 
 const Navbar = ({setFollowUp}) => {
@@ -17,7 +18,8 @@ const Navbar = ({setFollowUp}) => {
                         <Button onClick={toggleColorMode}>
                             {colorMode === "light" ? <IoMoon /> : <LuSun size={20} />}
                         </Button>
-                        {/* TODO: Incluir botao para cadastrar movimentacao */}
+
+                        <CreateMovimentacaoModal setFollowUp={setFollowUp} />
                     </Flex>
                 </Flex>
             </Box>
