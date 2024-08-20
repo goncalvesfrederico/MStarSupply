@@ -2,6 +2,9 @@
 
 **MStarSupply** is an inventory management system developed with Flask on the backend and React with Vite and Chakra UI on the frontend. It allows for managing products, including registering new items, tracking entries and exits, and displaying data in a user-friendly manner.
 
+## Diagram
+<img width="1025" alt="image" src="https://github.com/user-attachments/assets/59c63083-dbb3-48cc-9cb9-b2b098ad58c9">
+
 ## Features
 
 - **Products Registration:** Register new items in the inventory, including detailed information about each product.
