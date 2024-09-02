@@ -4,12 +4,12 @@ from utils.utils import error_msg
 from datetime import datetime
 from models import Categoria, Mercadoria, Local, User, TipoMovimentacao, FollowUp
 from services.manufacturer.manufacturer_service import get_manufacturer, create_manufacturer, delete_manufacturer, update_manufacturer
+from services.category.category_service import get_category, create_category, delete_category, update_category
 
 # Get Fabricante
 @app.route("/api/fabricantes", methods=["GET"])
 def get_fabricante():
     return get_manufacturer()
-
 
 # Create Fabricante
 @app.route("/api/fabricantes", methods=["POST"])
@@ -29,92 +29,22 @@ def update_fabricante(id):
 # Get Categoria
 @app.route("/api/categorias", methods=["GET"])
 def get_categoria():
-    categorias = Categoria.query.all()
-    result = [categoria.to_json() for categoria in categorias]
-    return jsonify(result)
+    return get_category()
 
 # Create Categoria
 @app.route("/api/categorias", methods=["POST"])
 def create_categoria():
-    try:
-        data = request.json
-        
-        # validation if the fields is empty!
-        required_fields = ["nome"]
-        for field in required_fields:
-            if field not in data or not data.get(field):
-                return jsonify(
-                    {
-                        'error': f"Campo Obrigatótio: {field}",
-                    }
-                ), 400
-            
-        nome = data.get("nome")
-        new_categoria = Categoria(
-            nome=nome,
-        )
-        db.session.add(new_categoria)
-        db.session.commit()
-        return jsonify(new_categoria.to_json()), 201
-
-    except Exception as e:
-        db.session.rollback()
-        return jsonify(error_msg(e)), 500
+    return create_category()
     
 # Delete Categoria
 @app.route("/api/categorias/<int:id>", methods=["DELETE"])
 def delete_categoria(id):
-    try:
-        categoria = Categoria.query.get(id)
-        if categoria is None:
-            return jsonify(
-                {
-                    "error": "Categoria não encontrado",
-                }
-            ), 404
-        nome_categoria = categoria.nome
-        db.session.delete(categoria)
-        db.session.commit()
-        return jsonify(
-            {
-                "msg": f"Fabricante {nome_categoria} excluido!"
-            }
-        ), 200
-
-    except Exception as e:
-        db.session.rollback()
-        return jsonify(error_msg(e)), 500
+    return delete_category(id)
 
 # Update Categoria
 @app.route("/api/categorias/<int:id>", methods=["PATCH"])
 def update_categoria(id):
-    try:
-        categoria = Categoria.query.get(id)
-        if categoria is None:
-            return jsonify(
-                {
-                    "error": "Categoria não encontrado."
-                }
-            )
-        data = request.json
-
-        # validation if the fields is empty!
-        required_fields = ["nome"]
-        for field in required_fields:
-            if field not in data or not data.get(field):
-                return jsonify(
-                    {
-                        'error': f"Campo Obrigatótio: {field}",
-                    }
-                ), 404
-            
-        categoria.nome = data.get("nome", categoria.nome)
-        db.session.commit()
-        return jsonify(categoria.to_json()),200
-
-    except Exception as e:
-        db.session.rollback()
-        return jsonify(error_msg(e)), 500
+    return update_category(id)
     
 # Get Mercadoria
 @app.route("/api/mercadorias", methods=["GET"])
