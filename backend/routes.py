@@ -6,6 +6,7 @@ from models import Mercadoria, Local, User, TipoMovimentacao, FollowUp
 from services.manufacturer.manufacturer_service import get_manufacturer, create_manufacturer, delete_manufacturer, update_manufacturer
 from services.category.category_service import get_category, create_category, delete_category, update_category
 from services.products.products_service import get_products, create_products, delete_products, update_products
+from services.location.location_service import get_location, create_location, delete_location, update_location
 
 # Get Fabricante
 @app.route("/api/fabricantes", methods=["GET"])
@@ -70,93 +71,22 @@ def update_mercadoria(id):
 # Get Local
 @app.route("/api/locais", methods=["GET"])
 def get_local():
-    locais = Local.query.all()
-    result = [local.to_json() for local in locais]
-    return jsonify(result)
+    return get_location()
 
 # Create Local
 @app.route("/api/locais", methods=["POST"])
 def create_local():
-    try:
-        data = request.json
-        
-        # validation if the fields is empty!
-        required_fields = ["nome", "endereco"]
-        for field in required_fields:
-            if field not in data or not data.get(field):
-                return jsonify(
-                    {
-                        'error': f"Campo Obrigatótio: {field}",
-                    }
-                ), 400
-            
-        nome = data.get("nome")
-        endereco = data.get("endereco")
-        new_local = Local(
-            nome=nome,
-            endereco=endereco,
-        )
-        db.session.add(new_local)
-        db.session.commit()
-        return jsonify(new_local.to_json()), 201
-
-    except Exception as e:
-        db.session.rollback()
-        return jsonify(error_msg(e)), 500
+    return create_location()
 
 # Delete Local
 @app.route("/api/locais/<int:id>", methods=["DELETE"])
 def delete_local(id):
-    try:
-        local = Local.query.get(id)
-        if local is None:
-            return jsonify(
-                {
-                    "error": "Local não encontrado"
-                }
-            )
-        local_nome = local.nome
-        db.session.delete(local)
-        return jsonify(
-            {
-                "msg": f"Local {local_nome} foi excluido!"
-            }
-        )
-    except Exception as e:
-        db.session.rollback()
-        return jsonify(error_msg(e)), 500
+    return delete_location(id)
 
 # Update Local
 @app.route("/api/locais/<int:id>", methods=["PATCH"])
 def update_local(id):
-    try:
-        local = Local.query.get(id)
-        if local is None:
-            return jsonify(
-                {
-                    "error": "Local não encontrado"
-                }
-            )
-        
-        data = request.json
-        # validation if the fields is empty!
-        required_fields = ["nome", "endereco"]
-        for field in required_fields:
-            if field not in data or not data.get(field):
-                return jsonify(
-                    {
-                        'error': f"Campo Obrigatótio: {field}",
-                    }
-                ), 400
-            
-        local.nome = data.get("nome", local.nome)
-        local.endereco = data.get("endereco", local.endereco)
-        db.session.commit()
-        return jsonify(local.to_json()), 200
-    
-    except Exception as e:
-        db.session.rollback()
-        return jsonify(error_msg(e)), 500
+    return update_location(id)
     
 # Get users
 @app.route("/api/users", methods=["GET"])
