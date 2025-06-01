@@ -4,32 +4,13 @@ from utils.utils import error_msg
 from datetime import datetime
 from models import Mercadoria, Local, User, TipoMovimentacao, FollowUp
 from routes.manufacturer_routes import manufacturer_routes
-from services.category.category_service import get_category, create_category, delete_category, update_category
+from routes.category_routes import category_routes
 from services.products.products_service import get_products, create_products, delete_products, update_products
 from services.location.location_service import get_location, create_location, delete_location, update_location
 from services.user.user_service import get_user, create_user, delete_user, update_user
 
 app.register_blueprint(manufacturer_routes)
-
-# Get Categoria
-@app.route("/api/categorias", methods=["GET"])
-def get_categoria():
-    return get_category()
-
-# Create Categoria
-@app.route("/api/categorias", methods=["POST"])
-def create_categoria():
-    return create_category()
-    
-# Delete Categoria
-@app.route("/api/categorias/<int:id>", methods=["DELETE"])
-def delete_categoria(id):
-    return delete_category(id)
-
-# Update Categoria
-@app.route("/api/categorias/<int:id>", methods=["PATCH"])
-def update_categoria(id):
-    return update_category(id)
+app.register_blueprint(category_routes)
     
 # Get Mercadoria
 @app.route("/api/mercadorias", methods=["GET"])
