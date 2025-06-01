@@ -8,7 +8,7 @@ CORS(app)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///mstarsupply.db"
 db = SQLAlchemy(app)
 
-import routes
+from routes import routes
 
 with app.app_context():
     db.create_all()

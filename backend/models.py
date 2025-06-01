@@ -90,6 +90,9 @@ class TipoMovimentacao(db.Model):
     nome = db.Column(db.String(50), nullable=False)
     followups = db.relationship("FollowUp", backref="tipomovimentacao")
 
+    def __init__(self, nome) -> None:
+        self.nome = nome
+
     def to_json(self):
         return {
             "id": self.id,
@@ -111,6 +114,22 @@ class FollowUp(db.Model):
         mercadoria: "Mercadoria"
         user: "User"
         local: "Local"
+
+    def __init__(
+            self, 
+            tipo_movimentacao_id, 
+            mercadoria_id, 
+            user_id, 
+            local_id, 
+            quantidade,
+            data_movimento
+    ) -> None:
+        tipo_movimentacao_id=tipo_movimentacao_id,
+        mercadoria_id=mercadoria_id,
+        user_id=user_id,
+        local_id=local_id,
+        quantidade=quantidade,
+        data_movimento=data_movimento
 
     def to_json(self):
         return {

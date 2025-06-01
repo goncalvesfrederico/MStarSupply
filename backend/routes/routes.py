@@ -3,31 +3,13 @@ from app import app, db
 from utils.utils import error_msg
 from datetime import datetime
 from models import Mercadoria, Local, User, TipoMovimentacao, FollowUp
-from services.manufacturer.manufacturer_service import get_manufacturer, create_manufacturer, delete_manufacturer, update_manufacturer
+from routes.manufacturer_routes import manufacturer_routes
 from services.category.category_service import get_category, create_category, delete_category, update_category
 from services.products.products_service import get_products, create_products, delete_products, update_products
 from services.location.location_service import get_location, create_location, delete_location, update_location
 from services.user.user_service import get_user, create_user, delete_user, update_user
 
-# Get Fabricante
-@app.route("/api/fabricantes", methods=["GET"])
-def get_fabricante():
-    return get_manufacturer()
-
-# Create Fabricante
-@app.route("/api/fabricantes", methods=["POST"])
-def create_fabricante():
-    return create_manufacturer()
-
-# Delete Fabricante
-@app.route("/api/fabricantes/<int:id>", methods=["DELETE"])
-def delete_fabricante(id):
-    return delete_manufacturer(id)
-
-# Update Fabricante
-@app.route("/api/fabricantes/<int:id>", methods=["PATCH"])
-def update_fabricante(id):
-    return update_manufacturer(id)
+app.register_blueprint(manufacturer_routes)
 
 # Get Categoria
 @app.route("/api/categorias", methods=["GET"])
@@ -120,7 +102,7 @@ def get_tipo_movimentacao():
 @app.route("/api/tipomovimentacao", methods=["POST"])
 def create_tipo_movimentacao():
     try:
-        data = request.json
+        data = request.get_json() or {}
         
         # validation if the fields is empty!
         required_fields = ["nome"]
@@ -181,7 +163,7 @@ def update_tipo_movimentacao(id):
                 }
             ), 404
         
-        data = request.json
+        data = request.get_json() or {}
         
         # validation if the fields is empty!
         required_fields = ["nome"]
@@ -212,7 +194,7 @@ def get_followup():
 @app.route("/api/followup", methods=["POST"])
 def create_followup():
     try:
-        data = request.json
+        data = request.get_json() or {}
         
         # validation if the fields is empty!
         required_fields = ["tipoMovimentacaoId", "mercadoriaId", "userId", "localId", "quantidade"]
