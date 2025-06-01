@@ -5,32 +5,13 @@ from datetime import datetime
 from models import Mercadoria, Local, User, TipoMovimentacao, FollowUp
 from routes.manufacturer_routes import manufacturer_routes
 from routes.category_routes import category_routes
-from services.products.products_service import get_products, create_products, delete_products, update_products
+from routes.product_routes import products_routes
 from services.location.location_service import get_location, create_location, delete_location, update_location
 from services.user.user_service import get_user, create_user, delete_user, update_user
 
 app.register_blueprint(manufacturer_routes)
 app.register_blueprint(category_routes)
-    
-# Get Mercadoria
-@app.route("/api/mercadorias", methods=["GET"])
-def get_mercadorias():
-    return get_products()
-
-# Create Mercadoria
-@app.route("/api/mercadorias", methods=["POST"])
-def create_mercadoria():
-    return create_products()
-
-# Delete Mercadoria
-@app.route("/api/mercadorias/<int:id>", methods=["DELETE"])
-def delete_mercadoria(id):
-    return delete_products(id)
-
-# Update Mercadoria
-@app.route("/api/mercadorias/<int:id>", methods=["PATCH"])
-def update_mercadoria(id):
-    return update_products(id)
+app.register_blueprint(products_routes)
     
 # Get Local
 @app.route("/api/locais", methods=["GET"])
