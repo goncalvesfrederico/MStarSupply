@@ -6,12 +6,14 @@ from models import Mercadoria, Local, User, TipoMovimentacao, FollowUp
 from routes.manufacturer_routes import manufacturer_routes
 from routes.category_routes import category_routes
 from routes.product_routes import products_routes
+from routes.movement_type_routes import movement_type_routes
 from services.location.location_service import get_location, create_location, delete_location, update_location
 from services.user.user_service import get_user, create_user, delete_user, update_user
 
 app.register_blueprint(manufacturer_routes)
 app.register_blueprint(category_routes)
 app.register_blueprint(products_routes)
+app.register_blueprint(movement_type_routes)
     
 # Get Local
 @app.route("/api/locais", methods=["GET"])
@@ -52,98 +54,6 @@ def delete_usuario(id):
 @app.route("/api/users/<int:id>", methods=["PATCH"])
 def update_usuario(id):
     return update_user(id)
-    
-# Get Tipo da Movimentacao
-@app.route("/api/tipomovimentacao", methods=["GET"])
-def get_tipo_movimentacao():
-    tipo_movimentacao = TipoMovimentacao.query.all()
-    result = [tipo.to_json() for tipo in tipo_movimentacao]
-    return jsonify(result)
-
-# Create Tipo da Movimentacao
-@app.route("/api/tipomovimentacao", methods=["POST"])
-def create_tipo_movimentacao():
-    try:
-        data = request.get_json() or {}
-        
-        # validation if the fields is empty!
-        required_fields = ["nome"]
-        for field in required_fields:
-            if not data.get(field):
-                return jsonify(
-                    {
-                        "error": f"Campo Obrigatótio: {field}"
-                    }
-                ), 404
-            
-        nome = data.get("nome")
-        new_tipo_movimentacao = TipoMovimentacao(
-            nome=nome,
-        )
-        db.session.add(new_tipo_movimentacao)
-        db.session.commit()
-        return jsonify(new_tipo_movimentacao.to_json()), 201
-    
-    except Exception as e:
-        db.session.rollback()
-        return jsonify(error_msg(e)), 500 
-
-# Delete Tipo da Movimentacao
-@app.route("/api/tipomovimentacao/<int:id>", methods=["DELETE"])
-def delete_tipo_movimentacao(id):
-    try:
-        tipo_movimentacao = TipoMovimentacao.query.get(id)
-        if tipo_movimentacao is None:
-            return jsonify(
-                {
-                    "error": "Tipo de Movimentacao nao encontrado!"
-                }
-            ), 404
-        
-        tipo_movimentacao_nome = tipo_movimentacao.nome
-        db.session.delete(tipo_movimentacao)
-        db.session.commit()
-        return jsonify(
-            {
-                "msg": f"Usuario {tipo_movimentacao_nome} deletado!"
-            }
-        ), 200
-    
-    except Exception as e:
-        db.session.rollback()
-        return jsonify(error_msg(e)), 500 
-
-# Update Tipo da Movimentacao
-@app.route("/api/tipomovimentacao/<int:id>", methods=["PATCH"])
-def update_tipo_movimentacao(id):
-    try:
-        tipo_movimentacao = TipoMovimentacao.query.get(id)
-        if tipo_movimentacao is None:
-            return jsonify(
-                {
-                    "error": "Tipo de Movimentacao nao encontrado!"
-                }
-            ), 404
-        
-        data = request.get_json() or {}
-        
-        # validation if the fields is empty!
-        required_fields = ["nome"]
-        for field in required_fields:
-            if not data.get(field):
-                return jsonify(
-                    {
-                        "error": f"Campo Obrigatótio: {field}"
-                    }
-                ), 404
-            
-        tipo_movimentacao.nome = data.get("nome", tipo_movimentacao.nome)
-        db.session.commit()
-        return jsonify(tipo_movimentacao.to_json()), 200
-    
-    except Exception as e:
-        db.session.rollback()
-        return jsonify(error_msg(e)), 500 
     
 # Get Followup
 @app.route("/api/followup", methods=["GET"])
