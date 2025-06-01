@@ -1,5 +1,6 @@
 from app import db
 from datetime import datetime
+from typing import TYPE_CHECKING
 
 class Fabricante(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -35,6 +36,9 @@ class Mercadoria(db.Model):
     categoria_id = db.Column(db.Integer, db.ForeignKey("categoria.id"), nullable=False)
     followups = db.relationship("FollowUp", backref="mercadoria")
 
+    if TYPE_CHECKING:
+        fabricante: "Fabricante"
+        categoria: "Categoria"
 
     def to_json(self):
         return {
@@ -101,6 +105,12 @@ class FollowUp(db.Model):
     local_id = db.Column(db.Integer, db.ForeignKey('local.id'), nullable=False)
     quantidade = db.Column(db.Integer, nullable=False)
     data_movimento = db.Column(db.DateTime, default=datetime.now(), nullable=False)
+
+    if TYPE_CHECKING:
+        tipomovimentacao: "TipoMovimentacao"
+        mercadoria: "Mercadoria"
+        user: "User"
+        local: "Local"
 
     def to_json(self):
         return {
