@@ -1,5 +1,6 @@
 from flask import Blueprint
-from services.products.products_service import get_products, create_products, delete_products, update_products
+from services.products.products_service import get_products, create_products, delete_products, \
+    update_products
 
 products_routes = Blueprint("products", __name__)
 
