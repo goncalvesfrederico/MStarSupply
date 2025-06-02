@@ -7,34 +7,15 @@ from routes.manufacturer_routes import manufacturer_routes
 from routes.category_routes import category_routes
 from routes.product_routes import products_routes
 from routes.movement_type_routes import movement_type_routes
-from services.location.location_service import get_location, create_location, delete_location, update_location
+from routes.location_routes import location_routes
 from services.user.user_service import get_user, create_user, delete_user, update_user
 
 app.register_blueprint(manufacturer_routes)
 app.register_blueprint(category_routes)
 app.register_blueprint(products_routes)
 app.register_blueprint(movement_type_routes)
-    
-# Get Local
-@app.route("/api/locais", methods=["GET"])
-def get_local():
-    return get_location()
+app.register_blueprint(location_routes)
 
-# Create Local
-@app.route("/api/locais", methods=["POST"])
-def create_local():
-    return create_location()
-
-# Delete Local
-@app.route("/api/locais/<int:id>", methods=["DELETE"])
-def delete_local(id):
-    return delete_location(id)
-
-# Update Local
-@app.route("/api/locais/<int:id>", methods=["PATCH"])
-def update_local(id):
-    return update_location(id)
-    
 # Get users
 @app.route("/api/users", methods=["GET"])
 def get_usuario():
